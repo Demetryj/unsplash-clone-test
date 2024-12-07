@@ -1,0 +1,28 @@
+@import '_variables.scss';
+@import '_mixins.scss';
+
+.noResult {
+  text-align: center;
+  color: $middle-gray-color;
+
+  @include tablet {
+    font-size: 18px;
+  }
+
+  @include minDesktop {
+    font-size: 24px;
+  }
+}
+
+.noResult span {
+  font-size: 16px;
+  font-weight: 700;
+
+  @include tablet {
+    font-size: 22px;
+  }
+
+  @include minDesktop {
+    font-size: 28px;
+  }
+}

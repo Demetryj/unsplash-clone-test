@@ -1,0 +1,107 @@
+@import '_variables.scss';
+@import '_mixins.scss';
+
+.header {
+  position: sticky;
+  top: 0;
+  padding: 16px 0;
+
+  min-width: 375px;
+
+  background-color: $white-color;
+  border-bottom: 1px solid $disbled-color;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  z-index: 1000;
+
+  @include tablet {
+    padding: 20px 0;
+  }
+}
+
+.headerContiner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: $black-color;
+
+  transition: color 300ms;
+
+  &:hover {
+    color: $middle-gray-color;
+  }
+
+  @include tablet {
+    font-size: 24px;
+  }
+
+  @include minDesktop {
+    font-size: 28px;
+  }
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  @include tablet {
+    gap: 20px;
+  }
+
+  @include minDesktop {
+    gap: 25px;
+  }
+}
+
+.navigationLink {
+  font-size: 14px;
+  color: $black-color;
+
+  transition: color 300ms;
+
+  &:hover {
+    color: $middle-gray-color;
+  }
+
+  @include tablet {
+    font-size: 16px;
+  }
+
+  @include minDesktop {
+    font-size: 18px;
+  }
+}
+
+.logoutButton {
+  padding: 8px 16px;
+  background-color: transparent;
+
+  border: 2px solid $black-color;
+  border-radius: 4px;
+
+  font-size: 14px;
+  color: $black-color;
+
+  transition:
+    background-color 300ms,
+    color 300ms;
+
+  &:hover {
+    background-color: $black-color;
+    color: $white-color;
+  }
+
+  @include tablet {
+    font-size: 16px;
+  }
+
+  @include minDesktop {
+    font-size: 18px;
+  }
+}

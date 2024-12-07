@@ -1,0 +1,62 @@
+@import '_variables.scss';
+@import '_mixins.scss';
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  margin-top: 40px;
+
+  @include tablet {
+    margin-top: 50px;
+  }
+
+  @include minDesktop {
+    margin-top: 60px;
+  }
+}
+
+.pagination__button {
+  padding: 6px 12px;
+
+  font-size: 14px;
+  background-color: $black-color;
+  color: $white-color;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 300ms;
+
+  &:disabled {
+    background-color: $disbled-color;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $accent-black-color;
+  }
+
+  @include tablet {
+    padding: 8px 14px;
+    font-size: 16px;
+  }
+
+  @include minDesktop {
+    padding: 10px 16px;
+    font-size: 18px;
+  }
+}
+
+.pagination__text {
+  font-size: 14px;
+  color: $accent-black-color;
+
+  @include tablet {
+    font-size: 16px;
+  }
+
+  @include minDesktop {
+    font-size: 18px;
+  }
+}
