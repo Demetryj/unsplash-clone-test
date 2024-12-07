@@ -1,5 +1,4 @@
-import { Suspense } from 'react';
-import { SearchBar, ToggleColumnsButton, Gallery, Pagination, Loader } from '@/components';
+import { SearchBar, ToggleColumnsButton, Gallery, Pagination } from '@/components';
 
 import { PER_PAGE } from '@/constants';
 
@@ -29,27 +28,26 @@ export default async function Home({ searchParams }) {
     <section className="section">
       <div className="container">
         <SearchBar query={query} />
-        <Suspense fallback={<Loader />}>
-          {images.length === 0 ? (
-            <p className={styles.noResult}>
-              Зображень за запитом <span>{`"${query}"`}</span> не знайдено. <br />
-              Спробуйте змінити пошукове слово.
-            </p>
-          ) : (
-            <>
-              <ToggleColumnsButton columns={columns} page={page} query={query} />
 
-              <Gallery images={images} columns={columns} />
+        {images.length === 0 ? (
+          <p className={styles.noResult}>
+            Зображень за запитом <span>{`"${query}"`}</span> не знайдено. <br />
+            Спробуйте змінити пошукове слово.
+          </p>
+        ) : (
+          <>
+            <ToggleColumnsButton columns={columns} page={page} query={query} />
 
-              <Pagination
-                currentPage={page}
-                query={query}
-                columns={columns}
-                hasNextPage={images.length >= PER_PAGE}
-              />
-            </>
-          )}
-        </Suspense>
+            <Gallery images={images} columns={columns} />
+
+            <Pagination
+              currentPage={page}
+              query={query}
+              columns={columns}
+              hasNextPage={images.length >= PER_PAGE}
+            />
+          </>
+        )}
       </div>
     </section>
   );

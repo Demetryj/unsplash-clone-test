@@ -1,77 +1,62 @@
-'use client';
+import { getServerSession } from 'next-auth/next';
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
+import authOptions from '@/app/api/auth/[...nextauth]/route';
+import dbConnect from '@/lib/mongoose';
+import User from '@/models/User';
 
-import { Loader, ToggleColumnsButton, Gallery, Pagination } from '@/components';
-
+import { Gallery, Pagination, ToggleColumnsButton } from '@/components';
 import { PER_PAGE } from '@/constants';
 
 import styles from '@/styles/Profile.module.scss';
 
-export default function Profile() {
-  const [images, setImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export const dynamic = 'force-dynamic';
 
-  const { data: session } = useSession();
-  const searchParams = useSearchParams();
+export default async function Profile({ searchParams }) {
+  const session = await getServerSession(authOptions);
 
-  const page = parseInt(searchParams.get('page')) || 1;
-  const columns = parseInt(searchParams.get('columns')) || 3;
-
-  useEffect(() => {
-    const fetchCollection = async () => {
-      if (!session) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const res = await axios.get('/api/collection/get', {
-          params: { page, per_page: PER_PAGE },
-        });
-
-        setImages(res.data.images);
-      } catch (error) {
-        console.error('Error fetching collection:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCollection();
-  }, [session, page]);
-
-  if (!session && !isLoading) {
+  if (!session) {
     return (
       <div className={styles.noLogin}>Будь ласка, увійдіть, щоб переглянути свій профіль.</div>
     );
   }
 
-  if (isLoading) {
-    return <Loader />;
+  const page = parseInt(searchParams.page) || 1;
+  const per_page = PER_PAGE;
+  const columns = parseInt(searchParams.columns) || 3;
+
+  await dbConnect();
+
+  const user = await User.findOne({ email: session.user.email });
+  if (!user || !user.collections || user.collections.length === 0) {
+    return <div className={styles.noResult}>Ваша колекція порожня.</div>;
   }
+
+  const start = (page - 1) * per_page;
+  const end = start + per_page;
+  const paginatedImageIds = user.collections.slice(start, end);
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const imagesPromises = paginatedImageIds.map(id =>
+    fetch(`${baseUrl}/photos/${id}?client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`).then(
+      res => res.json()
+    )
+  );
+
+  const images = await Promise.all(imagesPromises);
 
   return (
     <section className={styles.section}>
       <div className="container">
-        <h1 className={styles.header}>Мій Профіль</h1>
+        <h1 className={styles.header}>Мой Профиль</h1>
 
-        {images.length !== 0 && !isLoading ? (
-          <>
-            <ToggleColumnsButton columns={columns} page={page} />
-
-            <Gallery images={images} columns={columns} />
-            <Pagination
-              currentPage={page}
-              columns={columns}
-              hasNextPage={images.length >= PER_PAGE}
-            />
-          </>
-        ) : (
-          <div className={styles.noResult}>Твоя колекція порожня.</div>
-        )}
+        <ToggleColumnsButton columns={columns} page={page} />
+        <Gallery images={images} columns={columns} />
+        <Pagination
+          currentPage={page}
+          columns={columns}
+          hasNextPage={user.collections.length > PER_PAGE}
+        />
       </div>
     </section>
   );
