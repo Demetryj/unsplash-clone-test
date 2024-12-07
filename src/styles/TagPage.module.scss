@@ -21,6 +21,10 @@
   text-align: center;
   color: $black-color;
 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   @include tablet {
     font-size: 32px;
   }
